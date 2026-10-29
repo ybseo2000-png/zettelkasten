@@ -1,3 +1,12 @@
+// Count distinct connected notes across the full garden, so search does not alter importance.
+export function nodeMetrics(items){
+ const index=new Map(),neighbors=new Map(items.map(n=>[n.id,new Set()]));
+ for(const note of items)for(const keyword of new Set(note.keywords)){
+  if(!index.has(keyword))index.set(keyword,new Set());index.get(keyword).add(note.id);
+ }
+ for(const ids of index.values())for(const id of ids)for(const other of ids)if(id!==other)neighbors.get(id).add(other);
+ return new Map([...neighbors].map(([id,connected])=>{const degree=connected.size;return [id,{degree,radius:10+22*Math.sqrt(degree/(degree+8))}];}));
+}
 // Deterministic force layout: shared keywords pull notes into visible groups.
 export function layout(items){
  const nodes=items.map((n,i)=>({n,x:500+Math.cos(i*2.39996)*Math.sqrt(i+1)*24,y:325+Math.sin(i*2.39996)*Math.sqrt(i+1)*24}));
