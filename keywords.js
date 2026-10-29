@@ -6,5 +6,5 @@ export function keywords(text) {
     if (word.length < 2 || stop.has(word)) continue;
     counts.set(word, (counts.get(word) || 0) + 1);
   }
-  return [...counts].sort((a,b)=>b[1]-a[1]).slice(0,6).map(([word])=>word);
+  return [...counts].sort((a,b)=>b[1]-a[1]).slice(0,5).map(([word])=>word);
 }
