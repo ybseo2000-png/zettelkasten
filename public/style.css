@@ -19,3 +19,10 @@
 }
 
 #detail.has-document{width:min(1120px,96vw)}.pdf-document{margin:20px 0}.pdf-link{display:inline-block;padding:10px 14px;border:1px solid #ccc;border-radius:7px;color:#000;text-decoration:none;font-size:12px}.pdf-link:hover{background:#eee}.pdf-help{font-size:12px;line-height:1.7}.pdf-frame{display:block;width:100%;height:70vh;min-height:350px;border:1px solid #ddd;border-radius:8px;background:#f4f4f4}
+
+/* Consistent note window, with viewport bounds for phones and small screens. */
+#detail{width:min(880px,94vw);height:min(760px,88dvh);max-height:88dvh;padding:30px;overflow:auto;box-sizing:border-box}
+#detail.has-flow{width:min(960px,94vw)}
+#detail.has-document{width:min(1120px,96vw)}
+#detail .pdf-frame{height:55dvh;min-height:240px}
+@media(max-width:650px){#detail,#detail.has-flow,#detail.has-document{width:94vw;height:88dvh;padding:22px 18px}}

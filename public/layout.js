@@ -10,7 +10,7 @@ export function nodeMetrics(items){
   const degree=connected.size,t=degree<=1?0:(degree-1)/(maxDegree-1);
   const pale=[170,170,170],deep=[255,204,0];
   const fill='#'+pale.map((c,i)=>Math.round(c+(deep[i]-c)*t).toString(16).padStart(2,'0')).join('');
-  return [id,{degree,radius:18,fill}];
+  return [id,{degree,radius:12,fill}];
  }));
 }
 // Deterministic force layout: shared keywords pull notes into visible groups.
