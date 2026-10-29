@@ -8,11 +8,10 @@ document.querySelectorAll('.close').forEach(b=>b.onclick=()=>b.closest('dialog')
 
 function renderFlows(note){
  const wrapper=el('section',undefined,'procedure');wrapper.setAttribute('aria-label','절차 순서도');
- wrapper.append(el('p','각 열은 독립적인 순서입니다. 두 절차 사이의 시점 대응은 표시하지 않았습니다.','flow-caption'));
  const columns=el('div',undefined,'flow-columns');
  note.flows.forEach(flow=>{const column=el('section',undefined,'flow-column');column.append(el('h3',flow.title));const list=el('ol',undefined,'flow-steps');flow.steps.forEach((step,i)=>{const item=el('li',undefined,'flow-step'+(step.optional?' optional':''));item.append(el('span',String(i+1).padStart(2,'0'),'step-number'),el('strong',step.label));if(step.optional)item.append(el('span','필요시','optional-label'));if(step.actors.length)item.append(el('p',step.actors.join(' · '),'step-actors'));list.append(item);});column.append(list);columns.append(column);});
- wrapper.append(columns,el('p','제공된 메모를 도식화했습니다. 관계기간 → 관계기관, 보안 → 보완, 국토계회평가센터 → 국토계획평가센터로 표기했습니다. 법령·기관명 및 절차의 최신성은 별도로 검증하지 않았습니다.','flow-caption'));
- const original=el('details',undefined,'flow-original');original.append(el('summary','원문 보기'),el('div',note.text,'note-text'));wrapper.append(original);return wrapper;
+ wrapper.append(columns);
+ const original=el('details',undefined,'flow-original');original.append(el('summary','내용 보기'),el('div',note.text,'note-text'));wrapper.append(original);return wrapper;
 }
 function renderDocument(note){
  const section=el('section',undefined,'pdf-document');
