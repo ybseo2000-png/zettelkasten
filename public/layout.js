@@ -5,7 +5,13 @@ export function nodeMetrics(items){
   if(!index.has(keyword))index.set(keyword,new Set());index.get(keyword).add(note.id);
  }
  for(const ids of index.values())for(const id of ids)for(const other of ids)if(id!==other)neighbors.get(id).add(other);
- return new Map([...neighbors].map(([id,connected])=>{const degree=connected.size;return [id,{degree,radius:10+22*Math.sqrt(degree/(degree+8))}];}));
+ const maxDegree=Math.max(1,...[...neighbors.values()].map(connected=>connected.size));
+ return new Map([...neighbors].map(([id,connected])=>{
+  const degree=connected.size,t=degree/maxDegree;
+  const pale=[255,249,219],deep=[229,173,0];
+  const fill='#'+pale.map((c,i)=>Math.round(c+(deep[i]-c)*t).toString(16).padStart(2,'0')).join('');
+  return [id,{degree,radius:14,fill}];
+ }));
 }
 // Deterministic force layout: shared keywords pull notes into visible groups.
 export function layout(items){
