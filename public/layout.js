@@ -5,10 +5,10 @@ export function nodeMetrics(items){
   if(!index.has(keyword))index.set(keyword,new Set());index.get(keyword).add(note.id);
  }
  for(const ids of index.values())for(const id of ids)for(const other of ids)if(id!==other)neighbors.get(id).add(other);
- const maxDegree=Math.max(1,...[...neighbors.values()].map(connected=>connected.size));
+ const maxDegree=Math.max(2,...[...neighbors.values()].map(connected=>connected.size));
  return new Map([...neighbors].map(([id,connected])=>{
-  const degree=connected.size,t=degree/maxDegree;
-  const pale=[255,249,219],deep=[229,173,0];
+  const degree=connected.size,t=degree<=1?0:(degree-1)/(maxDegree-1);
+  const pale=[170,170,170],deep=[255,204,0];
   const fill='#'+pale.map((c,i)=>Math.round(c+(deep[i]-c)*t).toString(16).padStart(2,'0')).join('');
   return [id,{degree,radius:14,fill}];
  }));
