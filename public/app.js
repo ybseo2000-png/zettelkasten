@@ -7,12 +7,20 @@ const graphNodes=new Map(),graphLines=[],matchers=new Map();
 const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 document.querySelectorAll('.close').forEach(b=>b.onclick=()=>b.closest('dialog').close());
 
+function renderText(text){
+ const content=el('div',undefined,'note-text');let offset=0;
+ for(const match of text.matchAll(/https?:\/\/[^\s<>]+/gu)){
+  content.append(document.createTextNode(text.slice(offset,match.index)));
+  const link=el('a',match[0]);link.href=match[0];link.target='_blank';link.rel='noopener noreferrer';content.append(link);offset=match.index+match[0].length;
+ }
+ content.append(document.createTextNode(text.slice(offset)));return content;
+}
 function renderFlows(note){
  const wrapper=el('section',undefined,'procedure');wrapper.setAttribute('aria-label','절차 순서도');
  const columns=el('div',undefined,'flow-columns');
  note.flows.forEach(flow=>{const column=el('section',undefined,'flow-column');column.append(el('h3',flow.title));const list=el('ol',undefined,'flow-steps');flow.steps.forEach((step,i)=>{const item=el('li',undefined,'flow-step'+(step.optional?' optional':''));item.append(el('span',String(i+1).padStart(2,'0'),'step-number'),el('strong',step.label));if(step.optional)item.append(el('span','필요시','optional-label'));if(step.actors.length)item.append(el('p',step.actors.join(' · '),'step-actors'));list.append(item);});column.append(list);columns.append(column);});
  wrapper.append(columns);
- const original=el('details',undefined,'flow-original');original.append(el('summary','내용 보기'),el('div',note.text,'note-text'));wrapper.append(original);return wrapper;
+ const original=el('details',undefined,'flow-original');original.append(el('summary','내용 보기'),renderText(note.text));wrapper.append(original);return wrapper;
 }
 function renderDocument(note){
  const section=el('section',undefined,'pdf-document');
@@ -20,7 +28,7 @@ function renderDocument(note){
  section.append(link,el('p','아래에서 문서를 읽을 수 있습니다. PDF가 표시되지 않으면 새 탭에서 열어주세요.','pdf-help'));
  const frame=el('iframe');frame.src='./'+note.document.path+'#view=FitH';frame.title=note.document.title;frame.className='pdf-frame';section.append(frame);return section;
 }
-function show(note){const body=$('#detailBody');$('#detail').classList.toggle('has-flow',Boolean(note.flows));$('#detail').classList.toggle('has-document',Boolean(note.document));body.replaceChildren(el('h2',note.title),el('p',new Date(note.createdAt).toLocaleDateString('ko-KR'),'date'),note.flows?renderFlows(note):el('div',note.text,'note-text'));if(note.document)body.append(renderDocument(note));if(note.image){const img=el('img');img.src=note.image;img.alt=note.title;body.append(img);}const tags=el('p');note.keywords.forEach(k=>tags.append(el('span','#'+k,'tag')));body.append(tags);const related=notes.filter(n=>n.id!==note.id&&n.keywords.some(k=>note.keywords.includes(k)));if(related.length){body.append(el('h3','이어지는 생각'));related.forEach(n=>{const b=el('button',n.title,'card');b.onclick=()=>show(n);body.append(b);});}if(!$('#detail').open)$('#detail').showModal();}
+function show(note){const body=$('#detailBody');$('#detail').classList.toggle('has-flow',Boolean(note.flows));$('#detail').classList.toggle('has-document',Boolean(note.document));body.replaceChildren(el('h2',note.title),el('p',new Date(note.createdAt).toLocaleDateString('ko-KR'),'date'),note.flows?renderFlows(note):renderText(note.text));if(note.document)body.append(renderDocument(note));if(note.image){const img=el('img');img.src=note.image;img.alt=note.title;body.append(img);}const tags=el('p');note.keywords.forEach(k=>tags.append(el('span','#'+k,'tag')));body.append(tags);const related=notes.filter(n=>n.id!==note.id&&n.keywords.some(k=>note.keywords.includes(k)));if(related.length){body.append(el('h3','이어지는 생각'));related.forEach(n=>{const b=el('button',n.title,'card');b.onclick=()=>show(n);body.append(b);});}if(!$('#detail').open)$('#detail').showModal();}
 function render(){
  const q=$('#search').value;
  const filtered=notes.filter(note=>matchers.get(note.id)(q));
